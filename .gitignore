@@ -1,0 +1,17 @@
+# Gradle
+.gradle/
+build/
+
+# IntelliJ IDEA / IDE
+out/
+*.iml
+.idea/
+
+# VS Code
+.vscode/
+
+# macOS
+.DS_Store
+
+# Local JDK manager (jenv / asdf .tool-versions etc.)
+.java-version
