@@ -1,0 +1,82 @@
+plugins {
+    id 'java-library'
+    id 'com.vanniktech.maven.publish' version '0.36.0'
+}
+
+group = 'org.cubrid'
+version = '0.1.0'
+description = 'Testcontainers module for CUBRID'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.release.set(8)
+    options.encoding = 'UTF-8'
+}
+
+tasks.withType(Javadoc).configureEach {
+    options.encoding = 'UTF-8'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    api 'org.testcontainers:jdbc:1.21.4'
+
+    testImplementation platform('org.junit:junit-bom:5.14.4')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly   'org.junit.platform:junit-platform-launcher'
+    testImplementation 'org.assertj:assertj-core:3.27.7'
+    testImplementation 'ch.qos.logback:logback-classic:1.5.32'
+    testRuntimeOnly   'org.cubrid:cubrid-jdbc:11.3.2.0053'
+}
+
+tasks.named('test', Test) {
+    useJUnitPlatform()
+    testLogging {
+        events 'passed', 'failed', 'skipped'
+        exceptionFormat 'full'
+        showStandardStreams = false
+    }
+}
+
+mavenPublishing {
+    publishToMavenCentral()
+    signAllPublications()
+
+    coordinates(group.toString(), 'testcontainers-cubrid', version.toString())
+
+    pom {
+        name = 'testcontainers-cubrid'
+        description = 'Testcontainers module for CUBRID'
+        url = 'https://github.com/cubrid/testcontainers-cubrid'
+        inceptionYear = '2026'
+
+        licenses {
+            license {
+                name = 'MIT License'
+                url = 'https://opensource.org/licenses/MIT'
+                distribution = 'repo'
+            }
+        }
+        developers {
+            developer {
+                id = 'cubrid'
+                name = 'CUBRID'
+                organization = 'CUBRID'
+                organizationUrl = 'https://www.cubrid.org'
+            }
+        }
+        scm {
+            connection = 'scm:git:https://github.com/cubrid/testcontainers-cubrid.git'
+            developerConnection = 'scm:git:ssh://git@github.com/cubrid/testcontainers-cubrid.git'
+            url = 'https://github.com/cubrid/testcontainers-cubrid'
+        }
+    }
+}
