@@ -65,9 +65,7 @@ def useCubridVersion = { Test testTask, String cubridVersion ->
             "Unknown cubrid.version '${cubridVersion}'. Supported: ${cubridImages.keySet().join(', ')}")
     }
     testTask.systemProperty 'cubrid.image', image
-    if (cubridVersion == 'nightly') {
-        testTask.doNotTrackState('The nightly image is republished under the same tag')
-    }
+    testTask.doNotTrackState('CUBRID images are republished under the same tag')
 }
 
 def selectedCubridVersion = providers.gradleProperty('cubrid.version').orNull

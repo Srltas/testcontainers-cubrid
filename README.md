@@ -114,7 +114,7 @@ Each version also has its own task: `testCubrid10_2`, `testCubrid11_0`, `testCub
 ./gradlew testAllVersions --continue
 ```
 
-Docker reuses the nightly image it already has, so run `docker pull ghcr.io/srltas/cubrid-nightly:nightly` first to test the latest build.
+The version tasks always run, because image tags, including the release ones, are republished in place. Docker still reuses an image it has already pulled, so run `docker pull <image>` first to test the latest push, for example `docker pull ghcr.io/srltas/cubrid-nightly:nightly`.
 
 ## License
 
