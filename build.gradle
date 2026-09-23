@@ -47,6 +47,7 @@ tasks.withType(Test).configureEach {
 }
 
 // Images the tests can run against, keyed by the value -Pcubrid.version accepts.
+// Keep in sync with the matrix in .github/workflows/ci.yml.
 def cubridImages = [
     '10.2'   : 'cubrid/cubrid:10.2',
     '11.0'   : 'cubrid/cubrid:11.0',
