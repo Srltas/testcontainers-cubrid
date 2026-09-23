@@ -37,13 +37,41 @@ dependencies {
     testRuntimeOnly   'org.cubrid:cubrid-jdbc:11.3.2.0053'
 }
 
-tasks.named('test', Test) {
+tasks.withType(Test).configureEach {
     useJUnitPlatform()
     testLogging {
         events 'passed', 'failed', 'skipped'
         exceptionFormat 'full'
         showStandardStreams = false
     }
+}
+
+// Images the tests can run against, keyed by the value -Pcubrid.version accepts.
+def cubridImages = [
+    '10.2'   : 'cubrid/cubrid:10.2',
+    '11.0'   : 'cubrid/cubrid:11.0',
+    '11.2'   : 'cubrid/cubrid:11.2',
+    '11.3'   : 'cubrid/cubrid:11.3',
+    '11.4'   : 'cubrid/cubrid:11.4',
+    'nightly': 'ghcr.io/srltas/cubrid-nightly:nightly',
+]
+
+// CubridImageSubstitutor reads cubrid.image in the test JVM.
+def useCubridVersion = { Test testTask, String cubridVersion ->
+    def image = cubridImages[cubridVersion]
+    if (image == null) {
+        throw new GradleException(
+            "Unknown cubrid.version '${cubridVersion}'. Supported: ${cubridImages.keySet().join(', ')}")
+    }
+    testTask.systemProperty 'cubrid.image', image
+    if (cubridVersion == 'nightly') {
+        testTask.doNotTrackState('The nightly image is republished under the same tag')
+    }
+}
+
+def selectedCubridVersion = providers.gradleProperty('cubrid.version').orNull
+if (selectedCubridVersion != null) {
+    tasks.named('test', Test) { useCubridVersion(it, selectedCubridVersion) }
 }
 
 mavenPublishing {
