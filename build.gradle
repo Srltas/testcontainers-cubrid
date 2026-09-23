@@ -74,6 +74,23 @@ if (selectedCubridVersion != null) {
     tasks.named('test', Test) { useCubridVersion(it, selectedCubridVersion) }
 }
 
+def versionTests = cubridImages.keySet().collect { cubridVersion ->
+    def suffix = cubridVersion == 'nightly' ? 'Nightly' : cubridVersion.replace('.', '_')
+    tasks.register("testCubrid${suffix}", Test) {
+        description = "Runs the tests against ${cubridImages[cubridVersion]}."
+        group = 'verification'
+        testClassesDirs = sourceSets.test.output.classesDirs
+        classpath = sourceSets.test.runtimeClasspath
+        useCubridVersion(it, cubridVersion)
+    }
+}
+
+tasks.register('testAllVersions') {
+    description = 'Runs the tests against every CUBRID version in parallel.'
+    group = 'verification'
+    dependsOn versionTests
+}
+
 mavenPublishing {
     publishToMavenCentral()
     signAllPublications()
